@@ -1,3 +1,5 @@
+import json
+
 def addCareer(career, group, path):
     with open(path, "a") as fd:
         fd.write(f"\t\"{career}\": \"{group}\",\n")
@@ -12,8 +14,54 @@ def addPerformance(career, list, path):
 
 def addGraduate(group, list, path):
     with open(path, "a") as fd:
-        l = [float(x) for x in list]
+        l = [ int(x.replace(".", "")) for x in list]
         fd.write(f"\t\"{group}\": {l},\n")
+
+def parseMatriculas(path):
+    groups = {}
+    careers = {}
+    data = []
+    with open(path + "grupos.json", "r") as fd:
+        groups = json.load(fd)
+    with open(path + "carreras.json", "r") as fd:
+        careers = json.load(fd)
+    for k, _ in careers.items():
+        careers[k] = [0, 0]
+    with open(path + "matri", "r") as fd:
+        data = fd.readlines()
+    for l in data:
+        i = parseLine(l)
+        try:
+            key = i[0]
+            groups[key][0] += i[1]
+            groups[key][1] += i[2]
+        except KeyError:
+            try:
+                careers[key][0] += i[1]
+                careers[key][1] += i[2]
+            except KeyError:
+                continue
+    print(groups)
+    with open(path + "grupos.json", "w") as fd:
+        json.dump(groups, fd)
+    with open(path + "matriculasCarreras.json", "w") as fd:
+        json.dump(careers, fd)
+    
+
+
+def parseLine(line):
+    aux = line.split(" ")
+    aux[-1] = aux[-1].replace("\n", "")
+    career = ""
+    for s in aux[:-2]:
+        if s == " ":
+            continue
+        career += s + " "
+    career = career[:-1]
+    return [career, int(aux[-2]), int(aux[-1])]
+    
+
+
 
 if __name__ == "__main__":
     import argparse 
@@ -32,3 +80,5 @@ if __name__ == "__main__":
         addPerformance(args.career, args.list, args.path)
     elif args.method == "addGraduate":
         addGraduate(args.group, args.list, args.path)
+    elif args.method == "parseMatriculas":
+        parseMatriculas(args.path)
