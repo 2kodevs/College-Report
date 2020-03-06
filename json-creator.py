@@ -40,13 +40,20 @@ def parseMatriculas(path):
                 careers[key][0] += i[1]
                 careers[key][1] += i[2]
             except KeyError:
+                print(l, "ERROR")
                 continue
-    print(groups)
     with open(path + "grupos.json", "w") as fd:
-        json.dump(groups, fd)
+        json.dump(groups, fd, ensure_ascii=False)
     with open(path + "matriculasCarreras.json", "w") as fd:
-        json.dump(careers, fd)
-    
+        json.dump(careers, fd, ensure_ascii=False)
+    acum = 0
+    for k,v in groups.items():
+        acum += v[0]
+    print(acum)
+    acum = 0
+    for k,v in careers.items():
+        acum += v[0]
+    print(acum)
 
 
 def parseLine(line):
@@ -57,7 +64,10 @@ def parseLine(line):
         if s == " ":
             continue
         career += s + " "
-    career = career[:-1]
+    i = -1
+    while career[i] == " ":
+        i -= 1
+    career = career[:i+1]
     return [career, int(aux[-2]), int(aux[-1])]
     
 
@@ -69,8 +79,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='json-creator')
     parser.add_argument('-c', '--career', type=str, default='', help='career')
     parser.add_argument('-g', '--group', type=str, default='', help='group of career')
-    parser.add_argument('-p', '--path', type=str, default='./resources/data/carreras.json', help='path of json')
-    parser.add_argument('-m', '--method', type=str, default='addCareer', help='method to call')
+    parser.add_argument('-p', '--path', type=str, default='./resources/data/', help='path of json')
+    parser.add_argument('-m', '--method', type=str, default='parseMatriculas', help='method to call')
     parser.add_argument('-l', '--list', nargs='+', required=False)
 
     args = parser.parse_args()
