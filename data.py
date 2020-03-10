@@ -23,6 +23,8 @@ institución, sino es un hecho común en todas las universidades del país. Pued
 las carreras con mayor aglomeración de mujeres y qué tienen estas en común que les resultan tan atractivas o viceversa.
 '''
 
+#Á É Í Ó Ú á é í ó ú ñ
+
 st.write(text1)
 
 def plot_bar_x():
